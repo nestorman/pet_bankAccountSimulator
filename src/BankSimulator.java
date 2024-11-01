@@ -37,7 +37,8 @@ public class BankSimulator {
             System.out.println("No accounts available");
         } else {
             for (Account account : bankAccountBase) {
-                account.getAccountInfo();
+                System.out.println(account.getAccountInfo());
+                System.out.println("---------------------------------");
             }
         }
 

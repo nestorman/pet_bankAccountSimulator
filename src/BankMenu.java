@@ -70,6 +70,8 @@ public class BankMenu {
             System.out.println("Enter interest rate: ");
             double interestRate = scanner.nextDouble();
             bankSimulator.addAccount(new SavingsAccount(accountId, accountHolder, accountBalance, interestRate));
+            System.out.println(bankSimulator.getAccount(accountId).getAccountInfo());
+
         } else {
             bankSimulator.addAccount(new Account(accountId, accountHolder, accountBalance));
         }
@@ -106,7 +108,7 @@ public class BankMenu {
         String accountId = scanner.next();
         Account account = bankSimulator.getAccount(accountId);
         if(account != null){
-            account.getAccountInfo();
+            System.out.println(account.getAccountInfo());
         }
         else {
             System.out.println("Account not found");
