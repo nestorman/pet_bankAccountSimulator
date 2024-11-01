@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class BankMenu {
@@ -45,7 +46,8 @@ public class BankMenu {
                     removeAccount();
                     break;
                 case 7:
-                    exit = false;
+
+                    exit = exitFromMenu();
                     break;
                 default:
                     System.out.println("Invalid option, try again.");
@@ -62,19 +64,41 @@ public class BankMenu {
         String accountId = scanner.next();
         System.out.println("Enter Account Holder");
         String accountHolder = scanner.next();
-        System.out.println("Enter Initial Balance");
-        double accountBalance = scanner.nextDouble();
-        System.out.println("Is it Saving Account ? Press Y or N");
-        char accountType = scanner.next().charAt(0);
-        if (accountType == 'Y' || accountType == 'y') {
-            System.out.println("Enter interest rate: ");
-            double interestRate = scanner.nextDouble();
-            bankSimulator.addAccount(new SavingsAccount(accountId, accountHolder, accountBalance, interestRate));
-            System.out.println(bankSimulator.getAccount(accountId).getAccountInfo());
 
-        } else {
-            bankSimulator.addAccount(new Account(accountId, accountHolder, accountBalance));
+        boolean validBalance = false;
+        double accountBalance = 0;
+
+        while (!validBalance) {
+            System.out.println("Enter Initial Balance");
+            try {
+                accountBalance = scanner.nextDouble();
+                validBalance = true;
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Invalid input.Please try a numeric value for the amount");
+                scanner.nextLine();
+            }
         }
+
+        boolean validAccountType = false;
+
+        while (!validAccountType) {
+            System.out.println("Is it Saving Account ? Press Y or N");
+            char accountType = scanner.next().charAt(0);
+            if (accountType == 'Y' || accountType == 'y') {
+                validAccountType = true;
+                System.out.println("Enter interest rate: ");
+                double interestRate = scanner.nextDouble();
+                bankSimulator.addAccount(new SavingsAccount(accountId, accountHolder, accountBalance, interestRate));
+                System.out.println(bankSimulator.getAccount(accountId).getAccountInfo());
+
+            } else if (accountType == 'N' || accountType == 'n') {
+                validAccountType = true;
+                bankSimulator.addAccount(new Account(accountId, accountHolder, accountBalance));
+            } else {
+                System.out.println("Error ! Try print only  Y or N");
+            }
+        }
+
 
     }
 
@@ -82,24 +106,41 @@ public class BankMenu {
         System.out.println("Enter Account ID:");
         String accountId = scanner.next();
         Account account = bankSimulator.getAccount(accountId);
-        if (account != null) {
-            System.out.println("Enter amount to deposit: ");
-            double amount = scanner.nextDouble();
-            account.deposit(amount);
-        } else {
-            System.out.println("Sorry but Account is not available");
+
+        boolean validDeposite = false;
+
+        while (!validDeposite) {
+            try {
+                System.out.println("Enter amount to deposit: ");
+                double amount = scanner.nextDouble();
+                account.deposit(amount);
+                validDeposite = true;
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Invalid input.Please try a numeric value for the amount");
+                scanner.nextLine();
+            }
         }
     }
+
 
     private void withdraw() {
         System.out.println("Enter Account ID");
         String accountId = scanner.next();
         Account account = bankSimulator.getAccount(accountId);
-        if (account != null) {
-            System.out.println("Enter the withdrawal amount");
-            double withdrawalAmount = scanner.nextDouble();
-            account.withDraw(withdrawalAmount);
+
+        boolean validWithdraw = false;
+        while (!validWithdraw) {
+            try {
+                System.out.println("Enter the withdrawal amount");
+                double withdrawalAmount = scanner.nextDouble();
+                account.withDraw(withdrawalAmount);
+            } catch (InputMismatchException inputMismatchException) {
+                System.out.println("Invalid input.Please try a numeric value for the amount");
+                scanner.nextLine();
+            }
+
         }
+
 
     }
 
@@ -107,10 +148,9 @@ public class BankMenu {
         System.out.println("Enter Account ID");
         String accountId = scanner.next();
         Account account = bankSimulator.getAccount(accountId);
-        if(account != null){
+        if (account != null) {
             System.out.println(account.getAccountInfo());
-        }
-        else {
+        } else {
             System.out.println("Account not found");
         }
 
@@ -121,6 +161,15 @@ public class BankMenu {
         System.out.println("Enter account ID to remove:");
         String accountId = scanner.next();
         bankSimulator.removeAccount(accountId);
+    }
+
+    private boolean exitFromMenu() {
+        System.out.println("Do you want exit ? Y or N");
+        char confirm = scanner.next().charAt(0);
+        if (confirm == 'Y' || confirm == 'y') {
+            return false;
+        }
+        return true;
     }
 
 
