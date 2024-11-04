@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class BankSimulator {
 
     private ArrayList<Account> bankAccountBase;
+    private static final String FILE_NAME = "bank_account.txt";
 
     public BankSimulator() {
         bankAccountBase = new ArrayList<>();
